@@ -1,0 +1,47 @@
+<project name="HelloWorldTest" basedir="." default="test">
+    
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="test.dir" value="${build.dir}/test-classes"/>
+    <property name="report.dir" value="Reports"/>
+
+    <path id="classpath">
+        <fileset dir="lib">
+            <include name="**/*.jar"/>
+        </fileset>
+        <pathelement path="${classes.dir}"/>
+        <pathelement path="${test.dir}"/>
+    </path>
+
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${report.dir}"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="${classes.dir}"/>
+        <javac srcdir="${src.dir}/main/java" destdir="${classes.dir}" includeantruntime="false"/>
+    </target>
+
+    <target name="compile-tests" depends="compile">
+        <mkdir dir="${test.dir}"/>
+        <javac srcdir="${src.dir}/test/java" destdir="${test.dir}" includeantruntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <target name="test" depends="compile-tests">
+        <mkdir dir="${report.dir}"/>
+        <junit printsummary="on" haltonfailure="yes">
+            <classpath refid="classpath"/>
+            <formatter type="xml"/>
+            <batchtest fork="yes" todir="${report.dir}">
+                <fileset dir="${src.dir}/test/java">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+</project>
